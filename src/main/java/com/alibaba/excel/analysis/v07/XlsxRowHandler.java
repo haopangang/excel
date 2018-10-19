@@ -17,6 +17,8 @@ import java.util.Arrays;
 import static com.alibaba.excel.constant.ExcelXmlConstants.*;
 
 /**
+ * 解析之后对各个
+ *
  * @author jipengfei
  */
 public class XlsxRowHandler extends DefaultHandler {
@@ -47,6 +49,14 @@ public class XlsxRowHandler extends DefaultHandler {
 
     }
 
+    /**
+     * 开始解析元素时，触发的事件
+     * @param uri
+     * @param localName
+     * @param name
+     * @param attributes
+     * @throws SAXException
+     */
     @Override
     public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
 
@@ -65,6 +75,11 @@ public class XlsxRowHandler extends DefaultHandler {
         }
     }
 
+    /**
+     * 开始一个cell的值的获取
+     * @param name
+     * @param attributes
+     */
     private void startCell(String name, Attributes attributes) {
         if (ExcelXmlConstants.CELL_TAG.equals(name)) {
             currentCellIndex = attributes.getValue(ExcelXmlConstants.POSITION);
@@ -89,6 +104,11 @@ public class XlsxRowHandler extends DefaultHandler {
         }
     }
 
+    /**
+     * 结束一个cellVal执行的方法
+     * @param name
+     * @throws SAXException
+     */
     private void endCellValue(String name) throws SAXException {
         // ensure size
         if (curCol >= curRowContent.length) {
@@ -115,6 +135,13 @@ public class XlsxRowHandler extends DefaultHandler {
         }
     }
 
+    /**
+     * 一个元素结束之后，执行的方法
+     * @param uri
+     * @param localName
+     * @param name
+     * @throws SAXException
+     */
     @Override
     public void endElement(String uri, String localName, String name) throws SAXException {
 
@@ -130,6 +157,12 @@ public class XlsxRowHandler extends DefaultHandler {
     }
 
 
+    /**
+     * 根据POI方法解析出来的Excel，获取其总共有多上行
+     *
+     * @param name
+     * @param attributes
+     */
     private void setTotalRowCount(String name, Attributes attributes) {
         if (DIMENSION.equals(name)) {
             String d = attributes.getValue(DIMENSION_REF);
@@ -140,6 +173,11 @@ public class XlsxRowHandler extends DefaultHandler {
 
     }
 
+    /**
+     * 如果是一行的数据结束之后，触发我们的结束方法
+     *
+     * @param name
+     */
     private void endRow(String name) {
         if (name.equals(ROW_TAG)) {
             registerCenter.notifyListeners(new OneRowAnalysisFinishEvent(Arrays.asList(curRowContent)));

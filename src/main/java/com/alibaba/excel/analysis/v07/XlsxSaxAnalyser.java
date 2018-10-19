@@ -39,7 +39,7 @@ public class XlsxSaxAnalyser extends BaseSaxAnalyser {
 
     public XlsxSaxAnalyser(AnalysisContext analysisContext) throws IOException, OpenXML4JException, XmlException {
         this.analysisContext = analysisContext;
-
+        // 是直接调用poi里面的方法来实现
         analysisContext.setCurrentRowNum(0);
         this.xssfReader = new XSSFReader(OPCPackage.open(analysisContext.getInputStream()));
         this.sharedStringsTable = this.xssfReader.getSharedStringsTable();
@@ -82,6 +82,13 @@ public class XlsxSaxAnalyser extends BaseSaxAnalyser {
         }
     }
 
+
+    /**
+     * 解析Excel中sheet页的方法
+     * 核心的方法
+     *
+     * @param inputStream
+     */
     private void parseXmlSource(InputStream inputStream) {
         InputSource sheetSource = new InputSource(inputStream);
         try {

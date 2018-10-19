@@ -3,6 +3,8 @@ package function.model;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.metadata.BaseRowModel;
 
+import java.util.Date;
+
 /**
  * @author jipengfei
  */
@@ -13,6 +15,9 @@ public class ExcelPropertyIndexModel extends BaseRowModel {
 
     @ExcelProperty(value = "年龄",index = 1)
     private String age;
+
+    @ExcelProperty(value = "生日",index = 7,format = "yyyy-MM-dd")
+    private Date birthday;
 
     @ExcelProperty(value = "邮箱",index = 2)
     private String email;
@@ -28,6 +33,15 @@ public class ExcelPropertyIndexModel extends BaseRowModel {
 
     @ExcelProperty(value = "备注",index = 6)
     private String last;
+
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
 
     public String getName() {
         return name;

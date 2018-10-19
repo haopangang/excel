@@ -14,13 +14,18 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
+ * excel分析的实现方法
  * @author jipengfei
  */
 public class ExcelAnalyserImpl implements ExcelAnalyser {
 
+    /**
+     *分析后生成的Excel解析文本
+     */
     private AnalysisContext analysisContext;
 
     private BaseSaxAnalyser saxAnalyser;
+
 
     private BaseSaxAnalyser getSaxAnalyser() {
         if (saxAnalyser == null) {

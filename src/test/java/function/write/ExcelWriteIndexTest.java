@@ -5,11 +5,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.metadata.Sheet;
+import com.alibaba.excel.metadata.TableStyle;
 import com.alibaba.excel.support.ExcelTypeEnum;
 
 import function.model.ExcelPropertyIndexModel;
@@ -26,12 +28,13 @@ public class ExcelWriteIndexTest {
 
     @Test
     public void test1() throws FileNotFoundException {
-        OutputStream out = new FileOutputStream("/Users/jipengfei/78.xlsx");
+        OutputStream out = new FileOutputStream("E:/78.xlsx");
         try {
             ExcelWriter writer = new ExcelWriter(out, ExcelTypeEnum.XLSX);
             //写第一个sheet, sheet1  数据全是List<String> 无模型映射关系
             Sheet sheet1 = new Sheet(1, 0,ExcelPropertyIndexModel.class);
             writer.write(getData(), sheet1);
+
             writer.finish();
         } catch (Exception e) {
             e.printStackTrace();
@@ -45,7 +48,7 @@ public class ExcelWriteIndexTest {
     }
     @Test
     public void test2() throws FileNotFoundException {
-        OutputStream out = new FileOutputStream("/Users/jipengfei/79.xlsx");
+        OutputStream out = new FileOutputStream("E:/79.xlsx");
         try {
             ExcelWriter writer = new ExcelWriter(out, ExcelTypeEnum.XLSX);
             //写第一个sheet, sheet1  数据全是List<String> 无模型映射关系
@@ -71,6 +74,7 @@ public class ExcelWriteIndexTest {
         model.setEmail("7827323@qq.com");
         model.setSax("男");
         model.setHeigh("1123");
+        model.setBirthday(new Date());
         datas.add(model);
         return datas;
     }

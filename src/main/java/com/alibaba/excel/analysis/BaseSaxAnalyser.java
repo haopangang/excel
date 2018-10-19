@@ -52,6 +52,10 @@ public abstract class BaseSaxAnalyser implements AnalysisEventRegisterCenter, Ex
         listeners = new LinkedHashMap<String, AnalysisEventListener>();
     }
 
+    /**
+     * 执行我们设置的listener时间方法
+     * @param event 事件
+     */
     public void notifyListeners(OneRowAnalysisFinishEvent event) {
         analysisContext.setCurrentRowAnalysisResult(event.getData());
 
