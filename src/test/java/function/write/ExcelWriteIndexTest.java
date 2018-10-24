@@ -33,6 +33,7 @@ public class ExcelWriteIndexTest {
             ExcelWriter writer = new ExcelWriter(out, ExcelTypeEnum.XLSX);
             //写第一个sheet, sheet1  数据全是List<String> 无模型映射关系
             Sheet sheet1 = new Sheet(1, 0,ExcelPropertyIndexModel.class);
+            sheet1.setAutoWidth(true);
             writer.write(getData(), sheet1);
 
             writer.finish();

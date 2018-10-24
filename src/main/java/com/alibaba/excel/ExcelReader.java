@@ -101,7 +101,7 @@ public class ExcelReader {
         analyser.analysis(sheet);
     }
 
-    @Deprecated
+
     public void read(Sheet sheet,Class<? extends BaseRowModel> clazz){
         sheet.setClazz(clazz);
         analyser.analysis(sheet);

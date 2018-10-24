@@ -16,7 +16,7 @@ public class ExcelPropertyIndexModel extends BaseRowModel {
     @ExcelProperty(value = "年龄",index = 1)
     private String age;
 
-    @ExcelProperty(value = "生日",index = 7,format = "yyyy-MM-dd")
+    @ExcelProperty(value = "生日",index = 7,format = "yyyy-MM-dd HH:mm:ss")
     private Date birthday;
 
     @ExcelProperty(value = "邮箱",index = 2)

@@ -37,6 +37,11 @@ public class AnalysisContextImpl implements AnalysisContext {
 
     private boolean use1904WindowDate = false;
 
+    /**
+     *
+     */
+    
+
     public void setUse1904WindowDate(boolean use1904WindowDate) {
         this.use1904WindowDate = use1904WindowDate;
     }

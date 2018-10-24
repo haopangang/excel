@@ -18,7 +18,6 @@ import static com.alibaba.excel.constant.ExcelXmlConstants.*;
 
 /**
  * 解析之后对各个
- *
  * @author jipengfei
  */
 public class XlsxRowHandler extends DefaultHandler {
@@ -31,6 +30,9 @@ public class XlsxRowHandler extends DefaultHandler {
 
     private int curCol;
 
+    /**
+     * 当前Excel中一行的所有数据
+     */
     private String[] curRowContent = new String[20];
 
     private String currentCellValue;
@@ -179,6 +181,7 @@ public class XlsxRowHandler extends DefaultHandler {
      * @param name
      */
     private void endRow(String name) {
+
         if (name.equals(ROW_TAG)) {
             registerCenter.notifyListeners(new OneRowAnalysisFinishEvent(Arrays.asList(curRowContent)));
             curRowContent = new String[20];

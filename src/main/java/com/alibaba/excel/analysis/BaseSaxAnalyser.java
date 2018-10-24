@@ -4,6 +4,7 @@ import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.event.AnalysisEventRegisterCenter;
 import com.alibaba.excel.event.OneRowAnalysisFinishEvent;
+import com.alibaba.excel.metadata.BaseRowModel;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.excel.util.TypeUtil;
@@ -53,18 +54,24 @@ public abstract class BaseSaxAnalyser implements AnalysisEventRegisterCenter, Ex
     }
 
     /**
-     * 执行我们设置的listener时间方法
+     * 执行我们设置的listener时间方法，
+     * 无论Excel的类型是什么
+     * @date 2018-
+     * @updateBy pangang.hao@hand-china.com
      * @param event 事件
      */
     public void notifyListeners(OneRowAnalysisFinishEvent event) {
         analysisContext.setCurrentRowAnalysisResult(event.getData());
 
+        Class<? extends BaseRowModel> clazz = analysisContext.getCurrentSheet().getClazz();
+        // 根据当前行是否属于，ExcelHeadProperty
         if (analysisContext.getCurrentRowNum() < analysisContext.getCurrentSheet().getHeadLineMun()) {
             if (analysisContext.getCurrentRowNum() <= analysisContext.getCurrentSheet().getHeadLineMun() - 1) {
                 analysisContext.buildExcelHeadProperty(null,
                     (List<String>)analysisContext.getCurrentRowAnalysisResult());
             }
         } else {
+
             analysisContext.setCurrentRowAnalysisResult(event.getData());
             if (listeners.size() == 1) {
                 analysisContext.setCurrentRowAnalysisResult(converter((List<String>)event.getData()));
