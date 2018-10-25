@@ -9,13 +9,13 @@ import com.alibaba.excel.metadata.BaseRowModel;
  */
 public class NoAnnModel extends BaseRowModel {
 
-    @ExcelProperty(index = 0)
+    @ExcelProperty(index = 0,value = "第一列")
     private String p1;
 
-    @ExcelProperty(index = 1)
+    @ExcelProperty(index = 1,value = "第二列")
     private String p2;
 
-    @ExcelProperty(index = 2)
+    @ExcelProperty(index = 2,value = "第三列")
     private String p3;
 
     public String getP1() {

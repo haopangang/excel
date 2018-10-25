@@ -1,8 +1,6 @@
 package com.alibaba.excel.metadata;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -15,7 +13,7 @@ public class Sheet {
     private int headLineMun;
 
     /**
-     *  从 1 开始
+     *
      */
     private int sheetNo;
 
@@ -50,6 +48,11 @@ public class Sheet {
      *
      */
     private int startRow = -1;
+
+    /**
+     * 需要合并的
+     */
+    private List<CellRange> mergeCells= null;
 
 
     public Sheet(int sheetNo) {
@@ -164,5 +167,19 @@ public class Sheet {
 
     public void setStartRow(int startRow) {
         this.startRow = startRow;
+    }
+
+    public List<CellRange> getMergeCells() {
+        return mergeCells;
+    }
+
+    public void setMergeCells(List<CellRange> mergeCells) {
+        this.mergeCells = mergeCells;
+    }
+    public void addMergeCell(int firstRow, int lastRow, int firstCol, int lastCol ){
+        if(this.mergeCells==null){
+            this.mergeCells=new LinkedList<>();
+        }
+        this.mergeCells.add(new CellRange(firstRow,lastRow,firstCol,lastCol));
     }
 }

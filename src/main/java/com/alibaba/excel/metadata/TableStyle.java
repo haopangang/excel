@@ -1,5 +1,7 @@
 package com.alibaba.excel.metadata;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
 
 /**
@@ -26,6 +28,30 @@ public class TableStyle {
      * 表格内容背景颜色
      */
     private IndexedColors tableContentBackGroundColor;
+
+    /**
+     * 当以上样式和这两个都存在时，
+     * 以下样式 优先级高
+     */
+    private CellStyle  tableContentCellStyle;
+    private CellStyle  tableHeadCellStyle;
+
+
+    public CellStyle getTableContentCellStyle() {
+        return tableContentCellStyle;
+    }
+
+    public void setTableContentCellStyle(CellStyle tableContentCellStyle) {
+        this.tableContentCellStyle = tableContentCellStyle;
+    }
+
+    public CellStyle getTableHeadCellStyle() {
+        return tableHeadCellStyle;
+    }
+
+    public void setTableHeadCellStyle(CellStyle tableHeadCellStyle) {
+        this.tableHeadCellStyle = tableHeadCellStyle;
+    }
 
     public IndexedColors getTableHeadBackGroundColor() {
         return tableHeadBackGroundColor;

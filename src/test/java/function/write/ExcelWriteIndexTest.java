@@ -55,6 +55,7 @@ public class ExcelWriteIndexTest {
             //写第一个sheet, sheet1  数据全是List<String> 无模型映射关系
             Sheet sheet1 = new Sheet(1, 3,MultiLineHeadExcelModel.class);
             sheet1.setAutoWidth(true);
+            sheet1.addMergeCell(3,3,0,1);
             writer.write(getModeldatas(), sheet1);
             writer.finish();
         } catch (Exception e) {

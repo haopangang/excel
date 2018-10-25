@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *
  * @author jipengfei
  */
 public class GenerateContextImpl implements GenerateContext {
@@ -54,41 +53,57 @@ public class GenerateContextImpl implements GenerateContext {
     public GenerateContextImpl(InputStream templateInputStream, OutputStream out, ExcelTypeEnum excelType,
                                boolean needHead) throws IOException {
         if (ExcelTypeEnum.XLS.equals(excelType)) {
-            if(templateInputStream == null) {
+            if (templateInputStream == null) {
                 this.workbook = new HSSFWorkbook();
-            }else {
+            } else {
                 this.workbook = new HSSFWorkbook(new POIFSFileSystem(templateInputStream));
             }
         } else {
-            if(templateInputStream == null) {
+            if (templateInputStream == null) {
                 this.workbook = new SXSSFWorkbook(500);
-            }else {
+            } else {
                 this.workbook = new SXSSFWorkbook(new XSSFWorkbook(templateInputStream));
             }
         }
         this.outputStream = out;
-        this.defaultCellStyle = buildDefaultCellStyle();
+        // 暂时不用 defaultCellStyle
+        // this.defaultCellStyle = buildDefaultCellStyle();
         this.needHead = needHead;
+    }
+
+    private CellStyle buildDefaultHeadCellStyle() {
+        CellStyle newCellStyle = buildDefaultCellStyle();
+        Font font = this.workbook.createFont();
+        font.setFontName("宋体");
+        font.setFontHeightInPoints((short) 14);
+        font.setBold(true);
+        newCellStyle.setFont(font);
+        newCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        newCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        return newCellStyle;
+    }
+
+    private CellStyle buildDefaultContentCellStyle() {
+        CellStyle newCellStyle = buildDefaultCellStyle();
+        Font font = this.workbook.createFont();
+        font.setFontName("宋体");
+        font.setFontHeightInPoints((short) 11);
+        newCellStyle.setFont(font);
+        return newCellStyle;
     }
 
     private CellStyle buildDefaultCellStyle() {
         CellStyle newCellStyle = this.workbook.createCellStyle();
-        Font font = this.workbook.createFont();
-        font.setFontName("宋体");
-        font.setFontHeightInPoints((short)14);
-        font.setBold(true);
-        newCellStyle.setFont(font);
         newCellStyle.setWrapText(true);
         newCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         newCellStyle.setAlignment(HorizontalAlignment.CENTER);
-        newCellStyle.setLocked(true);
-        newCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        newCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
         newCellStyle.setBorderBottom(BorderStyle.THIN);
-        newCellStyle.setBorderLeft(BorderStyle.THIN);
+        newCellStyle.setBorderRight(BorderStyle.THIN);
         return newCellStyle;
     }
 
+
+    @Override
     public void buildCurrentSheet(com.alibaba.excel.metadata.Sheet sheet) {
         if (sheetMap.containsKey(sheet.getSheetNo())) {
             this.currentSheet = sheetMap.get(sheet.getSheetNo());
@@ -96,20 +111,21 @@ public class GenerateContextImpl implements GenerateContext {
             Sheet sheet1 = null;
             try {
                 sheet1 = workbook.getSheetAt(sheet.getSheetNo());
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
-            if(sheet1 == null) {
+            if (sheet1 == null) {
                 this.currentSheet = workbook.createSheet(
-                    sheet.getSheetName() != null ? sheet.getSheetName() : sheet.getSheetNo() + "");
+                        sheet.getSheetName() != null ? sheet.getSheetName() : sheet.getSheetNo() + "");
                 this.currentSheet.setDefaultColumnWidth(20);
                 for (Map.Entry<Integer, Integer> entry : sheet.getColumnWidthMap().entrySet()) {
                     currentSheet.setColumnWidth(entry.getKey(), entry.getValue());
                 }
-            }else {
+            } else {
                 this.currentSheet = sheet1;
             }
             sheetMap.put(sheet.getSheetNo(), this.currentSheet);
+            // 创建excelHeadProperty
             buildHead(sheet.getHead(), sheet.getClazz());
             buildTableStyle(sheet.getTableStyle());
             if (needHead && excelHeadProperty != null) {
@@ -120,7 +136,9 @@ public class GenerateContextImpl implements GenerateContext {
     }
 
     private void buildHead(List<List<String>> head, Class<? extends BaseRowModel> clazz) {
-        if (head != null || clazz != null) { excelHeadProperty = new ExcelHeadProperty(clazz, head); }
+        if (head != null || clazz != null) {
+            excelHeadProperty = new ExcelHeadProperty(clazz, head);
+        }
     }
 
     public void appendHeadToExcel() {
@@ -132,8 +150,8 @@ public class GenerateContextImpl implements GenerateContext {
             }
             for (CellRange cellRangeModel : list) {
                 CellRangeAddress cra = new CellRangeAddress(cellRangeModel.getFirstRow() + n,
-                    cellRangeModel.getLastRow() + n,
-                    cellRangeModel.getFirstCol(), cellRangeModel.getLastCol());
+                        cellRangeModel.getLastRow() + n,
+                        cellRangeModel.getFirstCol(), cellRangeModel.getLastCol());
                 currentSheet.addMergedRegion(cra);
             }
             int i = n;
@@ -154,35 +172,52 @@ public class GenerateContextImpl implements GenerateContext {
         }
     }
 
+    /**
+     * 只有不为空时能赋值默认值
+     *
+     * @param tableStyle
+     */
     private void buildTableStyle(TableStyle tableStyle) {
         if (tableStyle != null) {
-            CellStyle headStyle = buildDefaultCellStyle();
-            if (tableStyle.getTableHeadFont() != null) {
-                Font font = this.workbook.createFont();
-                font.setFontName(tableStyle.getTableHeadFont().getFontName());
-                font.setFontHeightInPoints(tableStyle.getTableHeadFont().getFontHeightInPoints());
-                font.setBold(tableStyle.getTableHeadFont().isBold());
-                headStyle.setFont(font);
-            }
-            if (tableStyle.getTableHeadBackGroundColor() != null) {
-                headStyle.setFillForegroundColor(tableStyle.getTableHeadBackGroundColor().getIndex());
+            CellStyle headStyle = tableStyle.getTableHeadCellStyle();
+            if (headStyle == null) {
+                headStyle = buildDefaultCellStyle();
+                if (tableStyle.getTableHeadFont() != null) {
+                    Font font = this.workbook.createFont();
+                    font.setFontName(tableStyle.getTableHeadFont().getFontName());
+                    font.setFontHeightInPoints(tableStyle.getTableHeadFont().getFontHeightInPoints());
+                    font.setBold(tableStyle.getTableHeadFont().isBold());
+                    headStyle.setFont(font);
+                }
+                if (tableStyle.getTableHeadBackGroundColor() != null) {
+                    headStyle.setFillForegroundColor(tableStyle.getTableHeadBackGroundColor().getIndex());
+                }
             }
             this.currentHeadCellStyle = headStyle;
-            CellStyle contentStyle = buildDefaultCellStyle();
-            if (tableStyle.getTableContentFont() != null) {
-                Font font = this.workbook.createFont();
-                font.setFontName(tableStyle.getTableContentFont().getFontName());
-                font.setFontHeightInPoints(tableStyle.getTableContentFont().getFontHeightInPoints());
-                font.setBold(tableStyle.getTableContentFont().isBold());
-                contentStyle.setFont(font);
-            }
-            if (tableStyle.getTableContentBackGroundColor() != null) {
-                contentStyle.setFillForegroundColor(tableStyle.getTableContentBackGroundColor().getIndex());
+
+            CellStyle contentStyle = tableStyle.getTableContentCellStyle();
+            if (contentStyle == null) {
+                contentStyle = buildDefaultCellStyle();
+                if (tableStyle.getTableContentFont() != null) {
+                    Font font = this.workbook.createFont();
+                    font.setFontName(tableStyle.getTableContentFont().getFontName());
+                    font.setFontHeightInPoints(tableStyle.getTableContentFont().getFontHeightInPoints());
+                    font.setBold(tableStyle.getTableContentFont().isBold());
+                    contentStyle.setFont(font);
+                }
+                if (tableStyle.getTableContentBackGroundColor() != null) {
+                    contentStyle.setFillForegroundColor(tableStyle.getTableContentBackGroundColor().getIndex());
+                }
             }
             this.currentContentCellStyle = contentStyle;
+
+        } else {
+            this.currentHeadCellStyle = buildDefaultHeadCellStyle();
+            this.currentContentCellStyle = buildDefaultContentCellStyle();
         }
     }
 
+    @Override
     public void buildTable(Table table) {
         if (!tableMap.containsKey(table.getTableNo())) {
             buildHead(table.getHead(), table.getClazz());
@@ -195,14 +230,30 @@ public class GenerateContextImpl implements GenerateContext {
 
     }
 
+    @Override
+    public void buildMergeCells(List<CellRange> mergeCells) {
+        if (mergeCells != null && mergeCells.size() > 0) {
+            for (CellRange cellRange : mergeCells) {
+                CellRangeAddress cellRangeAddress = new CellRangeAddress(cellRange.getFirstRow(),
+                        cellRange.getLastRow(),
+                        cellRange.getFirstCol(),
+                        cellRange.getLastCol());
+                currentSheet.addMergedRegion(cellRangeAddress);
+            }
+        }
+    }
+
+    @Override
     public ExcelHeadProperty getExcelHeadProperty() {
         return this.excelHeadProperty;
     }
 
+    @Override
     public boolean needHead() {
         return this.needHead;
     }
 
+    @Override
     public Sheet getCurrentSheet() {
         return currentSheet;
     }
@@ -227,18 +278,22 @@ public class GenerateContextImpl implements GenerateContext {
         this.excelType = excelType;
     }
 
+    @Override
     public OutputStream getOutputStream() {
         return outputStream;
     }
 
+    @Override
     public CellStyle getCurrentHeadCellStyle() {
         return this.currentHeadCellStyle == null ? defaultCellStyle : this.currentHeadCellStyle;
     }
 
+    @Override
     public CellStyle getCurrentContentStyle() {
         return this.currentContentCellStyle;
     }
 
+    @Override
     public Workbook getWorkbook() {
         return workbook;
     }

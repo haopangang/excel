@@ -2,10 +2,7 @@ package com.alibaba.excel.write;
 
 import com.alibaba.excel.context.GenerateContext;
 import com.alibaba.excel.context.GenerateContextImpl;
-import com.alibaba.excel.metadata.BaseRowModel;
-import com.alibaba.excel.metadata.ExcelColumnProperty;
-import com.alibaba.excel.metadata.Sheet;
-import com.alibaba.excel.metadata.Table;
+import com.alibaba.excel.metadata.*;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.excel.util.POITempFile;
 import com.alibaba.excel.util.TypeUtil;
@@ -59,19 +56,23 @@ public class ExcelBuilderImpl implements ExcelBuilder {
                 addOneRowOfDataToExcel(data.get(i), n);
             }
         }
+
     }
 
     @Override
     public void addContent(List data, Sheet sheetParam) {
         context.buildCurrentSheet(sheetParam);
         addContent(data, sheetParam.getStartRow());
+        context.buildMergeCells(sheetParam.getMergeCells());
     }
+
 
     @Override
     public void addContent(List data, Sheet sheetParam, Table table) {
         context.buildCurrentSheet(sheetParam);
         context.buildTable(table);
         addContent(data, sheetParam.getStartRow());
+        context.buildMergeCells(sheetParam.getMergeCells());
     }
 
     @Override

@@ -80,14 +80,15 @@ public class ExcelWriteTest {
      */
     @Test
     public void test2() throws FileNotFoundException {
-        OutputStream out = new FileOutputStream("/Users/jipengfei/77.xlsx");
+        OutputStream out = new FileOutputStream("E:/77.xlsx");
         try {
-            ExcelWriter writer = new ExcelWriter(out, ExcelTypeEnum.XLSX,false);
+            ExcelWriter writer = new ExcelWriter(out, ExcelTypeEnum.XLSX,true);
 
             //写sheet1  数据全是List<String> 无模型映射关系
             Sheet sheet1 = new Sheet(1, 0);
             sheet1.setSheetName("第一个sheet");
             Table table1 = new Table(1);
+            table1.setTableStyle(getTableStyle());
             writer.write0(getListString(), sheet1, table1);
             writer.write0(getListString(), sheet1, table1);
 
@@ -223,6 +224,23 @@ public class ExcelWriteTest {
         contentFont.setFontName("黑体");
         tableStyle.setTableContentFont(contentFont);
         tableStyle.setTableContentBackGroundColor(IndexedColors.GREEN);
+        return tableStyle;
+    }
+
+    private TableStyle getTableStyle() {
+        TableStyle tableStyle = new TableStyle();
+        Font headFont = new Font();
+        headFont.setBold(true);
+        headFont.setFontHeightInPoints((short)22);
+        headFont.setFontName("楷体");
+        tableStyle.setTableHeadFont(headFont);
+        tableStyle.setTableHeadBackGroundColor(IndexedColors.BLUE);
+
+        Font contentFont = new Font();
+        contentFont.setFontHeightInPoints((short)12);
+        contentFont.setFontName("黑体");
+        tableStyle.setTableContentFont(contentFont);
+        tableStyle.setTableContentBackGroundColor(null);
         return tableStyle;
     }
 

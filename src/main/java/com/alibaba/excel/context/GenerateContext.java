@@ -1,5 +1,6 @@
 package com.alibaba.excel.context;
 
+import com.alibaba.excel.metadata.CellRange;
 import com.alibaba.excel.metadata.ExcelHeadProperty;
 import com.alibaba.excel.metadata.Table;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -7,6 +8,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  * @author jipengfei
@@ -61,6 +63,12 @@ public interface GenerateContext {
      * @return
      */
     boolean needHead();
+
+    /**
+     * 合并单元格
+     * @param mergeCells
+     */
+    void buildMergeCells(List<CellRange> mergeCells);
 }
 
 
