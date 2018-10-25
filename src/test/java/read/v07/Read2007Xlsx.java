@@ -3,17 +3,22 @@ package read.v07;
 import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
+import com.alibaba.excel.metadata.CheckoutResult;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
+import com.alibaba.excel.support.ResultEnum;
 import javamodel.ExcelRowJavaModel;
 import javamodel.ExcelRowJavaModel1;
 import javamodel.IdentificationExcel;
+import org.apache.commons.beanutils.BeanUtilsBean;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author jipengfei
@@ -145,12 +150,12 @@ public class Read2007Xlsx {
                 new AnalysisEventListener() {
                     @Override
                     public void invoke(Object object, AnalysisContext context) {
-                        ExcelRowJavaModel obj = null;
+                        Object obj = null;
                         if (context.getCurrentSheet().getSheetNo() == 1) {
                             obj = (ExcelRowJavaModel)object;
                         }
                         if (context.getCurrentSheet().getSheetNo() == 2) {
-                            obj = (ExcelRowJavaModel)object;
+                            obj = (ExcelRowJavaModel1)object;
                         }
                         System.out.println(
                             "当前sheet:" + context.getCurrentSheet().getSheetNo() + " 当前行：" + context.getCurrentRowNum()
@@ -300,20 +305,30 @@ public class Read2007Xlsx {
                 new AnalysisEventListener<Object>() {
                     @Override
                     public void invoke(Object object, AnalysisContext context) {
-                        ExcelRowJavaModel obj = null;
+                        Object obj = null;
                         if (context.getCurrentSheet().getSheetNo() == 1) {
                             obj = (ExcelRowJavaModel)object;
                         }
                         if (context.getCurrentSheet().getSheetNo() == 2) {
-                            obj = (ExcelRowJavaModel)object;
+                            obj = (ExcelRowJavaModel1)object;
                         }
                         System.out.println(
-                            "当前sheet:" + context.getCurrentSheet().getSheetNo() + " 当前行：" + context.getCurrentRowNum()
+                            "当前sheet:" + context.getCurrentSheet().getSheetNo()
+                                    + " 当前行：" + context.getCurrentRowNum()
                                 + " data:" + obj);
                     }
 
                     @Override
                     public void doAfterAllAnalysed(AnalysisContext context) {
+                        CheckoutResult checkoutResult = context.getCheckoutResult();
+                        // 校验是否发生了错误
+                        if(Objects.nonNull(checkoutResult) && checkoutResult.getStatus()== ResultEnum.ERROR){
+                            HashMap<Integer, StringBuilder> errMsg = checkoutResult.getErrMsg();
+                            for(HashMap.Entry<Integer,StringBuilder> entry:errMsg.entrySet()){
+                                System.out.println("第"+entry.getKey()+"行发生了错误。错误："+entry.getValue());
+                            }
+                        }
+
                     }
                 });
 

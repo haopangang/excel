@@ -14,16 +14,16 @@ import com.alibaba.excel.metadata.BaseRowModel;
 public class ExcelRowJavaModel1 extends BaseRowModel {
 
     @ExcelProperty(index = 0,value = "银行放款编号")
-    private String num;
+    private Integer num;
 
     @ExcelProperty(index = 1,value = "code")
     private String code;
 
-    public String getNum() {
+    public Integer getNum() {
         return num;
     }
 
-    public void setNum(String num) {
+    public void setNum(Integer num) {
         this.num = num;
     }
 

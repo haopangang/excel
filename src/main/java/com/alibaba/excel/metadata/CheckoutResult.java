@@ -27,9 +27,9 @@ public class CheckoutResult {
         return new CheckoutResult(ResultEnum.OK);
     }
 
-    public static CheckoutResult error(Integer rowNum,String msg){
+    public static CheckoutResult error(Integer rowNum,StringBuilder msg){
         return new CheckoutResult(ResultEnum.ERROR)
-                .setErrMsg(rowNum,new StringBuilder(msg));
+                .setErrMsg(rowNum,msg);
     }
 
 
@@ -61,5 +61,9 @@ public class CheckoutResult {
 
     public ResultEnum getStatus() {
         return status;
+    }
+
+    public void setStatus(ResultEnum status) {
+        this.status = status;
     }
 }

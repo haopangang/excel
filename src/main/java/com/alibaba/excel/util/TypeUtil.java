@@ -1,5 +1,7 @@
 package com.alibaba.excel.util;
 
+import com.alibaba.excel.metadata.CheckoutResult;
+import org.apache.commons.codec.binary.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 
 import java.lang.reflect.Field;
@@ -70,6 +72,8 @@ public class TypeUtil {
                 return Long.parseLong(value);
             }
             if (Date.class.equals(field.getType())) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+
                 if (value.contains("-") || value.contains("/") || value.contains(":")) {
                     return getSimpleDateFormatDate(value, format);
                 } else {
@@ -180,6 +184,7 @@ public class TypeUtil {
     }
 
     public static final Pattern pattern = Pattern.compile("[\\+\\-]?[\\d]+([\\.][\\d]*)?([Ee][+-]?[\\d]+)?$");
+    public static final Pattern IntegerPattern = Pattern.compile("^-?[1-9]\\d*$");
 
     private static boolean isNumeric(String str) {
         Matcher isNum = pattern.matcher(str);
@@ -189,10 +194,62 @@ public class TypeUtil {
         return true;
     }
 
+    private static boolean isInteger(String str) {
+        Matcher isInteger = IntegerPattern.matcher(str);
+        if (!isInteger.matches()) {
+            return false;
+        }
+        return true;
+    }
+
     public static String formatDate(Date cellValue, String format) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
 
         return simpleDateFormat.format(cellValue);
+    }
+
+    public static void validator(String value, Field field, String format, StringBuilder errorMsg) {
+        if (isNotEmpty(value)) {
+            if (Integer.class.equals(field.getType()) || int.class.equals(field.getType())
+                    || Long.class.equals(field.getType()) || long.class.equals(field.getType())) {
+                if (!isInteger(value)) {
+                    errorMsg.append("For input string:" + value + ",Not an integer;");
+                }
+
+            }
+
+            if (Double.class.equals(field.getType()) || double.class.equals(field.getType())
+                    || BigDecimal.class.equals(field.getType())) {
+                if (!isNumeric(value)) {
+                    errorMsg.append("For input string:" + value + ",not an numeric;");
+                }
+
+            }
+            if (Boolean.class.equals(field.getType()) || boolean.class.equals(field.getType())) {
+                String valueLower = value.toLowerCase();
+                if (valueLower.equals("true") || valueLower.equals("false")) {
+                    errorMsg.append("For input string:" + value + ",not an Boolean;");
+                }
+            }
+
+            if (Date.class.equals(field.getType())) {
+                if (!isNotEmpty(format)) {
+                    if (value.contains("-") || value.contains("/") || value.contains(":")) {
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+                        String datePattern = simpleDateFormat.toPattern();
+                        Matcher matcher = Pattern.compile(datePattern).matcher(value);
+                        if (!matcher.matches()) {
+                            errorMsg.append("For input string:" + value + ",Date format mismatch;");
+                        }
+                    }else if(!isNumeric(value)){
+                        errorMsg.append("For input string:" + value + ",Not a date format");
+                    }
+                }else {
+                    errorMsg.append("Date format Cannot be empty;");
+                }
+            }
+        }
+        return;
     }
 
     public static void main(String[] args) {

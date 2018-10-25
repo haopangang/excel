@@ -54,6 +54,7 @@ public class ExcelWriteIndexTest {
             ExcelWriter writer = new ExcelWriter(out, ExcelTypeEnum.XLSX);
             //写第一个sheet, sheet1  数据全是List<String> 无模型映射关系
             Sheet sheet1 = new Sheet(1, 3,MultiLineHeadExcelModel.class);
+            sheet1.setAutoWidth(true);
             writer.write(getModeldatas(), sheet1);
             writer.finish();
         } catch (Exception e) {
@@ -82,21 +83,21 @@ public class ExcelWriteIndexTest {
     private List<MultiLineHeadExcelModel> getModeldatas() {
         List<MultiLineHeadExcelModel> MODELS = new ArrayList<MultiLineHeadExcelModel>();
         MultiLineHeadExcelModel model1 = new MultiLineHeadExcelModel();
-        model1.setP1("111");
+        model1.setP1("哈哈哈哈哈哈哈哈哈哈或或或或或或或或");
         model1.setP2("222");
         model1.setP3(33);
         model1.setP4(44);
         model1.setP5("555");
         model1.setP6("666");
-        model1.setP7("777");
+        model1.setP7("哈哈哈哈哈哈哈哈哈哈或或或或或或或或");
         model1.setP8("888");
 
         MultiLineHeadExcelModel model2 = new MultiLineHeadExcelModel();
         model2.setP1("111");
-        model2.setP2("111");
+        model2.setP2("哈哈哈哈哈哈哈哈哈哈或或或或或或或或");
         model2.setP3(11);
         model2.setP4(9);
-        model2.setP5("111");
+        model2.setP5("哈哈哈哈哈哈哈哈哈哈或或或或或或或或");
         model2.setP6("111");
         model2.setP7("111");
         model2.setP8("111");

@@ -3,6 +3,7 @@ package com.alibaba.excel.context;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.exception.ExcelAnalysisException;
 import com.alibaba.excel.metadata.BaseRowModel;
+import com.alibaba.excel.metadata.CheckoutResult;
 import com.alibaba.excel.metadata.ExcelHeadProperty;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
@@ -12,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author jipengfei
  */
 public class AnalysisContextImpl implements AnalysisContext {
@@ -38,9 +38,10 @@ public class AnalysisContextImpl implements AnalysisContext {
     private boolean use1904WindowDate = false;
 
     /**
-     *
+     * 错误信息结果
      */
-    
+    private CheckoutResult checkoutResult;
+    private boolean isCheckout=true;
 
     public void setUse1904WindowDate(boolean use1904WindowDate) {
         this.use1904WindowDate = use1904WindowDate;
@@ -74,10 +75,18 @@ public class AnalysisContextImpl implements AnalysisContext {
     }
 
     public void setCurrentSheet(Sheet currentSheet) {
+        clearCurrentSheet();
         this.currentSheet = currentSheet;
         if (currentSheet.getClazz() != null) {
             buildExcelHeadProperty(currentSheet.getClazz(), null);
         }
+    }
+
+    private void clearCurrentSheet() {
+        this.excelHeadProperty = null;
+        this.currentRowNum = null;
+        this.totalCount = null;
+        this.checkoutResult = null;
     }
 
     public ExcelTypeEnum getExcelType() {
@@ -147,5 +156,15 @@ public class AnalysisContextImpl implements AnalysisContext {
 
     public boolean trim() {
         return this.trim;
+    }
+
+    @Override
+    public CheckoutResult getCheckoutResult() {
+        return checkoutResult;
+    }
+
+    @Override
+    public void setCheckoutResult(CheckoutResult checkoutResult) {
+        this.checkoutResult = checkoutResult;
     }
 }

@@ -77,7 +77,13 @@ public abstract class BaseSaxAnalyser implements AnalysisEventRegisterCenter, Ex
                 analysisContext.setCurrentRowAnalysisResult(converter((List<String>)event.getData()));
             }
             for (Map.Entry<String, AnalysisEventListener> entry : listeners.entrySet()) {
-                entry.getValue().invoke(analysisContext.getCurrentRowAnalysisResult(), analysisContext);
+                AnalysisEventListener analysisEventListener = entry.getValue();
+                Object currentRowAnalysisResult = analysisContext.getCurrentRowAnalysisResult();
+                if(analysisEventListener.validate(currentRowAnalysisResult,analysisContext)){
+                    analysisEventListener.invoke(currentRowAnalysisResult, analysisContext);
+                }else {
+                    break;
+                }
             }
         }
     }
